@@ -22,10 +22,11 @@ os.makedirs("Alliance_Maps")
 
 # Connect to AWS RDS Database
 cnx = mysql.connector.connect(
-	user='root', 
-	password='rootroot',
-	host='traviandb2.czwnxyxfgmoy.us-west-2.rds.amazonaws.com',
-	database='traviandb2')
+# Fill in below with appropriate credentials
+	user='', 
+	password='',
+	host='',
+	database='')
 
 cursor = cnx.cursor()
 
@@ -36,7 +37,7 @@ def executeScriptsFromFile(filename):
     fd.close()
     sqlCommands = sqlFile.split('\n')
     
-    cursor.execute("USE traviandb2;")
+    cursor.execute("USE database;") # replace 'database' with database name from above
     
     for i, command in enumerate(sqlCommands):
         try:
@@ -53,7 +54,7 @@ def executeScriptsFromFile(filename):
         sys.stdout.flush()
 
 # Download map.sql file 
-urllib.urlretrieve('https://ts3.travian.us/map.sql', 'map.sql')
+urllib.urlretrieve('https://ts3.travian.us/map.sql', 'map.sql') # Edit URL based on desired server
 
 # Function calls to run SQL scripts
 executeScriptsFromFile('pre-map.sql')
