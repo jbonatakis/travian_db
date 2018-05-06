@@ -1,1 +1,1 @@
-# traivan_db
+# travian_db
