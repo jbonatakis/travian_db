@@ -9,35 +9,142 @@ import sys
 import shutil
 import os
 import urllib
-import pandas as pd
-import matplotlib
-matplotlib.use('agg',warn=False,force=True)
-from matplotlib import pyplot as plt
-from datetime import datetime
 
-#Removes old directory if present and creates a new clean directory
-if os.path.exists("Alliance_Maps") :
-    shutil.rmtree("Alliance_Maps")
-os.makedirs("Alliance_Maps")
+servers = [ ['ae19', 'https://ts19.travian.ae/map.sql'],
 
-# Connect to AWS RDS Database
-cnx = mysql.connector.connect(
-# Fill in below with appropriate credentials
-	user='', 
-	password='',
-	host='',
-	database='')
+            ['au3', 'https://ts3.travian.com.au/map.sql'],
 
-cursor = cnx.cursor()
+            ['bgx', 'https://tx3.travian.bg/map.sql'],
 
+            ['br5', 'https://ts5.travian.com.br/map.sql'],
+            ['brx', 'https://tx3.travian.com.br/map.sql'],
+
+            ['cl1', 'https://ts1.travian.cl/map.sql'],
+            ['clx', 'https://tx3.travian.cl/map.sql'],
+
+            ['com1', 'https://ts1.travian.com/map.sql'],
+            ['com5', 'https://ts5.travian.com/map.sql'],
+            ['com19', 'https://ts19.travian.com/map.sql'],
+            ['com83', 'https://ts83.travian.com/map.sql'],
+
+            ['cz2', 'https://ts2.travian.cz/map.sql'],
+            ['cz19', 'https://ts19.travian.cz/map.sql'],
+            ['czx', 'https://tx3.travian.cz/map.sql'],
+
+            ['de2', 'https://ts2.travian.de/map.sql'],
+            ['de19', 'http://ts19.travian.de/map.sql'],
+            ['dex', 'https://tx3.travian.de/map.sql'],
+
+            ['dkx', 'https://tx3.travian.dk/map.sql'],
+
+            ['eg19', 'https://ts19.travian.com.eg/map.sql'],
+            ['egx', 'https://tx3.travian.com.eg/map.sql'],
+
+            ['fix', 'https://tx3.travian.fi/map.sql'],
+
+            ['fr1', 'https://ts1.travian.fr/map.sql'],
+            ['fr19', 'https://ts19.travian.fr/map.sql'],
+
+            ['hkx', 'https://tx3.travian.hk/map.sql'],
+
+            ['hu19', 'https://ts19.travian.hu/map.sql'],
+            ['hux', 'https://tx3.travian.hu/map.sql'],
+            
+            ['id5', 'https://ts5.travian.co.id/map.sql'],
+            ['id19', 'https://ts19.travian.co.id/map.sql'],
+
+            ['il19', 'https://ts19.travian.co.il/map.sql'],
+            ['ilx', 'https://tx3.travian.co.il/map.sql'],
+
+            ['ir19', 'https://ts19.travian.ir/map.sql'],
+            ['irx', 'https://tx3.travian.ir/map.sql'],
+
+            ['it1', 'https://ts1.travian.it/map.sql'],
+            ['it19', 'https://ts19.travian.it/map.sql'],
+            ['itx', 'https://tx3.travian.it/map.sql'],
+
+            ['jp19', 'https://ts19.travian.jp/map.sql'],
+
+            ['lt19', 'https://ts19.travian.lt/map.sql'],
+
+            ['my19', 'https://ts19.travian.com.my/map.sql'],
+
+            ['net1', 'https://ts1.travian.net/map.sql'],
+            ['netx', 'https://tx3.travian.net/map.sql'],
+
+            ['nl1', 'https://ts1.travian.nl/map.sql'],
+            ['nl19', 'https://ts19.travian.nl/map.sql'],
+            ['nlx', 'https://tx3.travian.nl/map.sql'],
+
+            ['nox', 'https://tx3.travian.no/map.sql'],
+
+            ['pl2', 'http://ts2.travian.pl/map.sql'],
+            ['pl19', 'http://ts19.travian.pl/map.sql'],
+            ['plx', 'http://tx3.travian.pl/map.sql'],
+
+            ['pt4', 'https://ts4.travian.pt/map.sql'],
+
+            ['ro3', 'https://ts3.travian.ro/map.sql'],
+            ['ro19', 'https://ts19.travian.ro/map.sql'],
+            ['rox', 'https://tx3.travian.ro/map.sql'],
+
+            ['rsx', 'https://tx3.travian.rs/map.sql'],
+
+            ['ru1', 'https://ts1.travian.ru/map.sql'],
+            ['ru19', 'https://ts19.travian.ru/map.sql'],
+            ['rux', 'https://tx3.travian.ru/map.sql'],
+
+            ['sa19', 'https://ts19.travian.com.sa/map.sql'],
+
+            ['sex', 'https://tx3.travian.se/map.sql'],
+
+            ['six', 'https://tx3.travian.si/map.sql'],
+
+            ['sk19', 'https://ts19.travian.sk/map.sql'],
+
+            ['th3', 'https://ts3.travian.asia/map.sql'],
+            ['th19', 'https://ts19.travian.asia/map.sql'],
+            ['thx', 'https://tx3.travian.asia/map.sql'],
+
+            ['tr5', 'https://ts5.travian.com.tr/map.sql'],
+            ['tr19', 'https://ts19.travian.com.tr/map.sql'],
+            ['trx', 'https://tx3.travian.com.tr/map.sql'],
+            
+            ['tw1', 'https://ts1.travian.tw/map.sql'],
+            ['tw19', 'https://ts19.travian.tw/map.sql'],
+            ['twx', 'https://tx3.travian.tw/map.sql'],
+
+            ['uk2', 'https://ts2.travian.co.uk/map.sql'],
+            ['uk3', 'https://ts3.travian.co.uk/map.sql'],
+            ['ukx', 'https://tx3.travian.co.uk/map.sql'],
+
+            ['us1', 'https://ts1.travian.us/map.sql'],
+            ['us3', 'https://ts3.travian.us/map.sql'],
+            
+            ['vn1', 'https://ts1.travian.com.vn/map.sql'],
+            ['vn19', 'https://ts19.travian.com.vn/map.sql'],
+            ['vnx', 'https://tx3.travian.com.vn/map.sql'],
+            
+            ['bk19', 'https://ts19.balkan.travian.com/map.sql'],
+            ['engb', 'https://ts19.english.travian.com/map.sql'],
+            ['hisp', 'https://ts19.hispano.travian.com/map.sql'],
+            ['itar', 'https://arabiats19.travian.com/map.sql'],
+            ['luso', 'https://ts19.lusobrasileiro.travian.com/map.sql'],
+            ['nord', 'https://ts19.nordics.travian.com/map.sql']]
+
+# Adds new directory for a new server if currently does not exist
+def checkServerDir(server):
+    if os.path.exists("/home/pi/serverTracking/" + server) == False:
+        os.makedirs("/home/pi/serverTracking/" + server)
+        
 # Function to run SQL scripts stored on EC2 instance
-def executeScriptsFromFile(filename):
+def executeScriptsFromFile(filename, server, cursor):
     fd = open(filename, 'r')
     sqlFile = fd.read()
     fd.close()
     sqlCommands = sqlFile.split('\n')
     
-    cursor.execute("USE database;") # replace 'database' with database name from above
+    cursor.execute("USE blackbla_" + server + ";")
     
     for i, command in enumerate(sqlCommands):
         try:
@@ -45,50 +152,35 @@ def executeScriptsFromFile(filename):
                 cursor.execute(command)
         except IOError, msg:
             print "Command skipped: ", msg
-        if(filename == 'map.sql'):
+        if(filename == '/home/pi/serverTracking/' + server + '/map.sql'):
             temp = math.floor(i/(len(sqlCommands) * 1.0) * 100)
             sys.stdout.write("\r[%-20s] %d%%" % ('|'* int(temp/5), int(temp)))
             sys.stdout.flush()
-    if(filename == 'map.sql'):
+    if(filename == '/home/pi/serverTracking/' + server + '/map.sql'):
         sys.stdout.write("\r[||||||||||||||||||||] 100%")
         sys.stdout.flush()
 
-# Download map.sql file 
-urllib.urlretrieve('https://ts3.travian.us/map.sql', 'map.sql') # Edit URL based on desired server
+def perServerWork(server, link):
+    temp = 'blackbla_' + server
+    cnx = mysql.connector.connect(
+        user='blackbla_Carni',
+        password='Jj)X%r}u5cti',
+        host='108.167.172.151',
+        database=temp)
+    cursor = cnx.cursor()
 
-# Function calls to run SQL scripts
-executeScriptsFromFile('pre-map.sql')
-executeScriptsFromFile('map.sql')
-executeScriptsFromFile('post-map.sql')
-print
+    # Download map.sql file 
+    urllib.urlretrieve(link, '/home/pi/serverTracking/' + server + '/map.sql')
 
-# Create DatFrame for top 10 alliances by population, based on most recent SQL pull
-cursor.execute('SELECT aName, SUM(population) FROM total_table WHERE aName != "" AND CreatedTime = (SELECT CreatedTime from total_table ORDER BY CreatedTime DESC LIMIT 1)  GROUP BY aID ORDER BY SUM(population) DESC LIMIT 10;')
-top_10_alliances = pd.DataFrame(cursor.fetchall())
+    # Function calls to run SQL scripts
+    executeScriptsFromFile('/home/pi/serverTracking/pre-map.sql', server, cursor)
+    executeScriptsFromFile('/home/pi/serverTracking/' + server + '/map.sql', server, cursor)
+    executeScriptsFromFile('/home/pi/serverTracking/post-map.sql', server, cursor)
+    print
 
-# Define column names for select-star DataFrame
-cols = ['playerID', 'xCoord', 'yCoord', 'tID', 'vID', 'village', 'userID', 'player', 'aID', 'aName', 'population', 'CreatedTime']
-
-# Select all data from most recent SQL pull, save as a DataFrame 
-cursor.execute('SELECT * FROM total_table WHERE CreatedTime = (SELECT CreatedTime from total_table ORDER BY CreatedTime DESC LIMIT 1);')
-select_star = pd.DataFrame(cursor.fetchall())
-select_star.columns = cols
-
-# Saves top 10 alliances in a list
-top10_list = top_10_alliances[0]
-
-today = datetime.today()
-# Loops through to create maps for all top 10 alliances
-for i in top10_list:
-
-    x = select_star.loc[(select_star.aName == i)]["xCoord"]
-    y = select_star.loc[(select_star.aName == i)]["yCoord"] 
-
-    fig = plt.figure()
-    ax = plt.scatter(x,y)
-    plt.title(i + " Map " + str(today.month) + '-' + str(today.day) + '-' + str(today.year))
-    fig.savefig('Alliance_Maps/' + i + ".png")
-
-# Commits 
-cnx.commit()
-
+for groups in servers:
+    try:
+        checkServerDir(groups[0])
+        perServerWork(groups[0], groups[1])
+    except:
+        print(groups[0] + " has failed.")
