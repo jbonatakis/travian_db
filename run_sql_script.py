@@ -163,9 +163,9 @@ def executeScriptsFromFile(filename, server, cursor):
 def perServerWork(server, link):
     temp = 'blackbla_' + server
     cnx = mysql.connector.connect(
-        user='blackbla_Carni',
-        password='Jj)X%r}u5cti',
-        host='108.167.172.151',
+        user='USERNAME',
+        password='PASSWORD',
+        host='HOST_IP',
         database=temp)
     cursor = cnx.cursor()
 
