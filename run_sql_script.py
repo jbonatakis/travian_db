@@ -11,6 +11,7 @@ import os
 import urllib
 
 servers = [ ['ae19', 'https://ts19.travian.ae/map.sql'],
+            ['aex', 'https://tx3.travian.ae/map.sql'],
 
             ['au3', 'https://ts3.travian.com.au/map.sql'],
 
@@ -52,6 +53,7 @@ servers = [ ['ae19', 'https://ts19.travian.ae/map.sql'],
             
             ['id5', 'https://ts5.travian.co.id/map.sql'],
             ['id19', 'https://ts19.travian.co.id/map.sql'],
+            ['idx', 'https://tx3.travian.com.id/map.sql'],
 
             ['il19', 'https://ts19.travian.co.il/map.sql'],
             ['ilx', 'https://tx3.travian.co.il/map.sql'],
@@ -95,12 +97,14 @@ servers = [ ['ae19', 'https://ts19.travian.ae/map.sql'],
             ['rux', 'https://tx3.travian.ru/map.sql'],
 
             ['sa19', 'https://ts19.travian.com.sa/map.sql'],
+            ['sax', 'https://tx3.travian.com.sa/map.sql'],
 
             ['sex', 'https://tx3.travian.se/map.sql'],
 
             ['six', 'https://tx3.travian.si/map.sql'],
 
             ['sk19', 'https://ts19.travian.sk/map.sql'],
+            ['skx', 'https://tx3.travian.sk/map.sql'],
 
             ['th3', 'https://ts3.travian.asia/map.sql'],
             ['th19', 'https://ts19.travian.asia/map.sql'],
@@ -132,11 +136,6 @@ servers = [ ['ae19', 'https://ts19.travian.ae/map.sql'],
             ['luso', 'https://ts19.lusobrasileiro.travian.com/map.sql'],
             ['nord', 'https://ts19.nordics.travian.com/map.sql']]
 
-# Adds new directory for a new server if currently does not exist
-def checkServerDir(server):
-    if os.path.exists("/home/pi/serverTracking/" + server) == False:
-        os.makedirs("/home/pi/serverTracking/" + server)
-        
 # Function to run SQL scripts stored on EC2 instance
 def executeScriptsFromFile(filename, server, cursor):
     fd = open(filename, 'r')
@@ -169,6 +168,10 @@ def perServerWork(server, link):
         database=temp)
     cursor = cnx.cursor()
 
+    if os.path.exists("/home/pi/serverTracking/" + server) == False:
+        os.makedirs("/home/pi/serverTracking/" + server)
+        executeScriptsFromFile('/home/pi/serverTracking/server-creation.sql', server, cursor)
+
     # Download map.sql file 
     urllib.urlretrieve(link, '/home/pi/serverTracking/' + server + '/map.sql')
 
@@ -176,11 +179,11 @@ def perServerWork(server, link):
     executeScriptsFromFile('/home/pi/serverTracking/pre-map.sql', server, cursor)
     executeScriptsFromFile('/home/pi/serverTracking/' + server + '/map.sql', server, cursor)
     executeScriptsFromFile('/home/pi/serverTracking/post-map.sql', server, cursor)
-    print
+    print(" " + server)
+    cnx.commit()
 
 for groups in servers:
     try:
-        checkServerDir(groups[0])
         perServerWork(groups[0], groups[1])
     except:
         print(groups[0] + " has failed.")
